@@ -35,6 +35,8 @@ import {
 } from "@/utils/versionUtils";
 import UIConfigurationModal from "../UIConfigurationModal/UIConfigurationModal";
 
+const LIVE_SCREEN_REFRESH_INTERVAL_MS = 2000;
+
 const Controller = () => {
   const [consoleMessageList, setConsoleMessageList] = useState<string>("");
   const [updateStatus, setUpdateStatus] = useState<string>("");
@@ -338,6 +340,20 @@ const Controller = () => {
       setNeedsRefresh(false);
     }
   }, [needsRefresh]);
+
+  useEffect(() => {
+    if (!setupComplete || !autoUpdateFrame) return;
+
+    const refreshInterval = window.setInterval(() => {
+      // A screen frame can take a moment to arrive. Wait for it before asking
+      // again so refresh requests never pile up in the serial queue.
+      if (disableTransmitAction) return;
+      setLoadingFrame(true);
+      void write("screenframeshort", false);
+    }, LIVE_SCREEN_REFRESH_INTERVAL_MS);
+
+    return () => window.clearInterval(refreshInterval);
+  }, [autoUpdateFrame, disableTransmitAction, setLoadingFrame, setupComplete, write]);
 
   useEffect(() => {
     // We dont add this to the console as its not needed. This may change in the future
