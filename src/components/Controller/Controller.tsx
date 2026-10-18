@@ -35,7 +35,7 @@ import {
 } from "@/utils/versionUtils";
 import UIConfigurationModal from "../UIConfigurationModal/UIConfigurationModal";
 
-const LIVE_SCREEN_REFRESH_INTERVAL_MS = 2000;
+const LIVE_SCREEN_REFRESH_INTERVAL_MS = 5000;
 
 const Controller = () => {
   const [consoleMessageList, setConsoleMessageList] = useState<string>("");
